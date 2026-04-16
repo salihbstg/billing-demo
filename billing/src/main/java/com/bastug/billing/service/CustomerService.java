@@ -2,11 +2,11 @@ package com.bastug.billing.service;
 
 import com.bastug.billing.dtos.CustomerDto;
 import com.bastug.billing.entity.Customer;
+import com.bastug.billing.exception.ApplicationExceptionImpl;
 import com.bastug.billing.mapper.CustomerMapper;
 import com.bastug.billing.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,8 +22,13 @@ public class CustomerService {
 
     //Müşteri kayıt
     public CustomerDto createCustomer(CustomerDto customerDto) {
+        Optional<Customer> optionalCustomer = customerRepository.findByNationalId(customerDto.getNationalId());
+        if (optionalCustomer.isPresent()) {
+            throw new ApplicationExceptionImpl("Müşteri zaten kayıtlı!");
+        }
         Customer customer = customerRepository.save(customerMapper.customerDtoToCustomer(customerDto));
         return customerMapper.customerToCustomerDto(customer);
+
     }
 
     //Müşteriyi müşteri numarasına göre çekme
@@ -32,7 +37,7 @@ public class CustomerService {
         if (customer.isPresent()) {
             return customerMapper.customerToCustomerDto(customer.get());
         } else {
-            return null;
+            throw new ApplicationExceptionImpl("Müşteri bulunamadı!");
         }
     }
 
@@ -42,7 +47,7 @@ public class CustomerService {
         if (customer.isPresent()) {
             return customerMapper.customerToCustomerDto(customer.get());
         } else {
-            return null;
+            throw new ApplicationExceptionImpl("Müşteri bulunamadı");
         }
     }
 
@@ -59,7 +64,7 @@ public class CustomerService {
             customerRepository.save(customerEntity);
             return customerMapper.customerToCustomerDto(customerEntity);
         } else {
-            return null;
+            throw new ApplicationExceptionImpl("Lütfen vermiş olduğunuz bilgileri kontrol edin!");
         }
     }
 
@@ -71,9 +76,8 @@ public class CustomerService {
             customerEntity.setActive(!customerEntity.getActive());
             customerRepository.save(customerEntity);
             return customerEntity.getActive();
-        }
-        else
-            return null;
+        } else
+            throw new ApplicationExceptionImpl("Müşteri bulunamadı!");
     }
 
     //Müşteri silme
@@ -82,8 +86,8 @@ public class CustomerService {
         if (customer.isPresent()) {
             customerRepository.delete(customer.get());
             return true;
-        }
-        return false;
+        } else
+            throw new ApplicationExceptionImpl("Müşteri bulunamadı!");
     }
 
     public List<CustomerDto> findAll() {
