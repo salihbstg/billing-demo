@@ -43,6 +43,9 @@ public class InvoicesMapper {
         outputInvoiceDto.setCustomerLastName(customer.getLastName());
         outputInvoiceDto.setCustomerNationalNumber(customer.getNationalId());
         outputInvoiceDto.setInvoiceId(invoice.getInvoiceId());
+        outputInvoiceDto.setDueDate(invoice.getDueDate());
         return outputInvoiceDto;
     }
+
+
 }
