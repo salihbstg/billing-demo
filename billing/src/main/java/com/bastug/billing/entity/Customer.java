@@ -11,10 +11,12 @@ import java.util.List;
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Customer {
-    public Customer(){
-        this.active=true;
-        this.createAt=LocalDateTime.now();
+    @PrePersist
+    public void prePersist() {
+        this.active = true;
+        this.createAt = LocalDateTime.now();
     }
 
     @Id
@@ -28,10 +30,8 @@ public class Customer {
     @Column(unique=true)
     private String nationalId;
     private String phone;
+    @Column(unique=true)
     private String email;
     private String address;
     private Boolean active;
-
-    @OneToMany(mappedBy = "customer")
-    private List<Invoice> invoices;
 }

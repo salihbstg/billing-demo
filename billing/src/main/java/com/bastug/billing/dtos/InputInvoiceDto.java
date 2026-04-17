@@ -5,13 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvoiceInputDto {
+public class InputInvoiceDto {
     private Long invoiceId;
-    private BigDecimal amount;
     private Long customerId;
+
+    private BigDecimal consumption; //m^3
+    private BigDecimal unitPrice;
+    private BigDecimal vatRate;
 }

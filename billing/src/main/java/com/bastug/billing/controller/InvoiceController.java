@@ -1,7 +1,6 @@
 package com.bastug.billing.controller;
 
-import com.bastug.billing.dtos.InvoiceInputDto;
-import com.bastug.billing.dtos.InvoiceOutputDto;
+import com.bastug.billing.dtos.InputInvoiceDto;
 import com.bastug.billing.service.InvoiceService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,7 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
     //Fatura oluşturma
     @PostMapping
-    public ResponseEntity<InvoiceOutputDto> createInvoice(@RequestBody InvoiceInputDto invoiceInputDto) {
-        return ResponseEntity.ok(invoiceService.createInvoice(invoiceInputDto));
+    public ResponseEntity<com.bastug.billing.dtos.OutputInvoiceDto> createInvoice(@RequestBody InputInvoiceDto inputInvoiceDto) {
+        return ResponseEntity.ok(invoiceService.createInvoice(inputInvoiceDto));
     }
 }

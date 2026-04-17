@@ -1,7 +1,7 @@
 package com.bastug.billing.service;
 
-import com.bastug.billing.dtos.InvoiceInputDto;
-import com.bastug.billing.dtos.InvoiceOutputDto;
+import com.bastug.billing.dtos.InputInvoiceDto;
+import com.bastug.billing.dtos.OutputInvoiceDto;
 import com.bastug.billing.entity.Customer;
 import com.bastug.billing.entity.Invoice;
 import com.bastug.billing.mapper.InvoicesMapper;
@@ -22,11 +22,11 @@ public class InvoiceService {
     private final CustomerRepository customerRepository;
 
     //Fatura oluşturma
-    public InvoiceOutputDto createInvoice(InvoiceInputDto invoiceInputDto) {
-        Optional<Customer> optionalCustomer = customerRepository.findById(invoiceInputDto.getCustomerId());
+    public OutputInvoiceDto createInvoice(InputInvoiceDto inputInvoiceDto) {
+        Optional<Customer> optionalCustomer = customerRepository.findById(inputInvoiceDto.getCustomerId());
         if (optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();
-            Invoice invoice=invoicesMapper.invoiceInputDtoToInvoice(invoiceInputDto);
+            Invoice invoice=invoicesMapper.invoiceInputDtoToInvoice(inputInvoiceDto);
             invoice.setCustomer(customer);
             return invoicesMapper.invoiceToInvoiceOutputDto(invoiceRepository.save(invoice),customer);
         }
