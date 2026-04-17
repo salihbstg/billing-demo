@@ -14,21 +14,19 @@ import java.time.LocalDateTime;
 public class CustomerMapper {
     public Customer customerDtoToCustomer(CustomerDto customerDto) {
         Customer customer = new Customer();
-        customer.setId(customerDto.getId());
+        customer.setCustomerId(customerDto.getCustomerId());
         customer.setName(customerDto.getName());
         customer.setAddress(customerDto.getAddress());
-        customer.setActive(true);
         customer.setEmail(customerDto.getEmail());
         customer.setPhone(customerDto.getPhone());
         customer.setNationalId(customerDto.getNationalId());
         customer.setLastName(customerDto.getLastName());
-        customer.setCreateAt(LocalDateTime.now());
         return customer;
     }
 
     public CustomerDto customerToCustomerDto(Customer customer) {
         CustomerDto customerDto = new CustomerDto();
-        customerDto.setId(customer.getId());
+        customerDto.setCustomerId(customer.getCustomerId());
         customerDto.setName(customer.getName());
         customerDto.setAddress(customer.getAddress());
         customerDto.setActive(customer.getActive());

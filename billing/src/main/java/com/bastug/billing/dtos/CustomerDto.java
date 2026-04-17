@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class CustomerDto {
-    private Long id;
+    private Long customerId;
     private String name;
     private String lastName;
     private String nationalId;
     private String phone;
     private String email;
     private String address;
-    private Boolean active=true;
-    private LocalDateTime createAt=LocalDateTime.now();
+    private Boolean active;
+    private LocalDateTime createAt;
 }
