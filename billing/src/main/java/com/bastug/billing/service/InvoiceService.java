@@ -29,40 +29,51 @@ public class InvoiceService {
         Optional<Customer> optionalCustomer = customerRepository.findById(inputInvoiceDto.getCustomerId());
         if (optionalCustomer.isPresent()) {
             Customer customer = optionalCustomer.get();
-            Invoice invoice=invoicesMapper.invoiceInputDtoToInvoice(inputInvoiceDto);
+            Invoice invoice = invoicesMapper.invoiceInputDtoToInvoice(inputInvoiceDto);
             invoice.setCustomer(customer);
-            return invoicesMapper.invoiceToInvoiceOutputDto(invoiceRepository.save(invoice),customer);
-        }
-        else
+            return invoicesMapper.invoiceToInvoiceOutputDto(invoiceRepository.save(invoice), customer);
+        } else
             throw new RuntimeException("Müşteri bulunamadı!");
     }
 
     //Tc ile fatura görüntüleme
-    public List<OutputInvoiceDto> getInvoice(String customerNationalId) {
-        Optional<Customer> optionalCustomer=customerRepository.findByNationalId(customerNationalId);
-        if (optionalCustomer.isPresent()) {
-            Customer customer = optionalCustomer.get();
-            List<Invoice> invoices=invoiceRepository.findByCustomer(customer);
-            List<OutputInvoiceDto> outputInvoiceDtoList=new ArrayList<>();
-            for (Invoice invoice:invoices) {
-                outputInvoiceDtoList.add(invoicesMapper.invoiceToInvoiceOutputDto(invoice,customer));
-            }
-            return outputInvoiceDtoList;
+    public List<OutputInvoiceDto> getAllInvoiceByNationalNumber(String customerNationalId) {
+
+        Customer customer = optionalCustomerByNationalId(customerNationalId);
+        List<Invoice> invoices = invoiceRepository.findByCustomer(customer);
+        List<OutputInvoiceDto> outputInvoiceDtoList = new ArrayList<>();
+        for (Invoice invoice : invoices) {
+            outputInvoiceDtoList.add(invoicesMapper.invoiceToInvoiceOutputDto(invoice, customer));
         }
-        else
-            throw new ApplicationExceptionImpl("Müşteri ya da fatura bulunamadı!");
+
+        return outputInvoiceDtoList;
+    }
+
+    //Ödenmemiş/Ödenmemiş fatura listeleme
+    public List<OutputInvoiceDto> getInvoicesByPaymentStatus(String customerNationalId, Boolean paymentStatus) {
+
+        Customer customer = optionalCustomerByNationalId(customerNationalId);
+        List<Invoice> invoices = invoiceRepository.findByCustomerAndPaid(customer,paymentStatus);
+        List<OutputInvoiceDto> outputInvoiceDtoList = new ArrayList<>();
+        for (Invoice invoice : invoices) {
+            outputInvoiceDtoList.add(invoicesMapper.invoiceToInvoiceOutputDto(invoice, customer));
+        }
+        return outputInvoiceDtoList;
     }
 
     //Fatura ödeme
     public Boolean pay(Long invoiceId) {
-        Optional<Invoice> optionalInvoice=invoiceRepository.findById(invoiceId);
+        Optional<Invoice> optionalInvoice = invoiceRepository.findById(invoiceId);
         if (optionalInvoice.isPresent()) {
-            Invoice invoice=optionalInvoice.get();
+            Invoice invoice = optionalInvoice.get();
             invoice.setPaid(true);
             invoiceRepository.save(invoice);
             return true;
-        }
-        else
+        } else
             throw new ApplicationExceptionImpl("Fatura bulunamadı!");
+    }
+
+    private Customer optionalCustomerByNationalId(String customerNationalId) {
+        return customerRepository.findByNationalId(customerNationalId).orElseThrow(() -> new ApplicationExceptionImpl("Müşteri bulunamadı!"));
     }
 }

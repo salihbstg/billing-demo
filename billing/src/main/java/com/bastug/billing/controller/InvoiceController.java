@@ -23,7 +23,13 @@ public class InvoiceController {
     //Müşteri tcsine göre fatura çekme
     @GetMapping("/{customerNationalId}")
     public ResponseEntity<List<OutputInvoiceDto>> getInvoices(@PathVariable(name = "customerNationalId") String customerNationalId) {
-        return ResponseEntity.ok(invoiceService.getInvoice(customerNationalId));
+        return ResponseEntity.ok(invoiceService.getAllInvoiceByNationalNumber(customerNationalId));
+    }
+
+    //Müşteri tcsi ve ödendi/ödenmedi olarak görüntüleme
+    @GetMapping("/isPaid")
+    public ResponseEntity<List<OutputInvoiceDto>> getInvoices(@RequestParam(name = "customerNationalId") String customerNationalId, @RequestParam(name = "isPaid") Boolean isPaid) {
+        return ResponseEntity.ok(invoiceService.getInvoicesByPaymentStatus(customerNationalId,isPaid));
     }
 
     //Fatura numarası ile ödeme
@@ -31,4 +37,5 @@ public class InvoiceController {
     public ResponseEntity<Boolean> payInvoice(@PathVariable(name = "invoiceId") Long invoiceId) {
         return ResponseEntity.ok(invoiceService.pay(invoiceId));
     }
+
 }
