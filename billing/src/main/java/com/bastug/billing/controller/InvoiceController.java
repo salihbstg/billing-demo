@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/invoices")
 @AllArgsConstructor
+@CrossOrigin("*")
 public class InvoiceController {
     private final InvoiceService invoiceService;
     //Fatura oluşturma
