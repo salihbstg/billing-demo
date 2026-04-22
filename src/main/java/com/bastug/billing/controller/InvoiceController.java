@@ -2,6 +2,8 @@ package com.bastug.billing.controller;
 
 import com.bastug.billing.dtos.InputInvoiceDto;
 import com.bastug.billing.dtos.OutputInvoiceDto;
+import com.bastug.billing.dtos.PaymentInputDto;
+import com.bastug.billing.dtos.PaymentOutputDto;
 import com.bastug.billing.service.InvoiceService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +36,9 @@ public class InvoiceController {
     }
 
     //Fatura numarası ile ödeme
-    @PostMapping("/pay/{invoiceId}")
-    public ResponseEntity<Boolean> payInvoice(@PathVariable(name = "invoiceId") Long invoiceId) {
-        return ResponseEntity.ok(invoiceService.pay(invoiceId));
+    @PostMapping("/pay")
+    public ResponseEntity<PaymentOutputDto> payInvoice(@RequestBody PaymentInputDto paymentInputDto) {
+        return ResponseEntity.ok(invoiceService.pay(paymentInputDto));
     }
 
 }

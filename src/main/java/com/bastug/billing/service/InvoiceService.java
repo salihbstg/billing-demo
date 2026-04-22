@@ -2,6 +2,8 @@ package com.bastug.billing.service;
 
 import com.bastug.billing.dtos.InputInvoiceDto;
 import com.bastug.billing.dtos.OutputInvoiceDto;
+import com.bastug.billing.dtos.PaymentInputDto;
+import com.bastug.billing.dtos.PaymentOutputDto;
 import com.bastug.billing.entity.Customer;
 import com.bastug.billing.entity.Invoice;
 import com.bastug.billing.exception.ApplicationExceptionImpl;
@@ -23,7 +25,7 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final InvoicesMapper invoicesMapper;
     private final CustomerRepository customerRepository;
-
+    private final PaymentService paymentService;
     //Fatura oluşturma
     public OutputInvoiceDto createInvoice(InputInvoiceDto inputInvoiceDto) {
         Optional<Customer> optionalCustomer = customerRepository.findById(inputInvoiceDto.getCustomerId());
@@ -62,13 +64,19 @@ public class InvoiceService {
     }
 
     //Fatura ödeme
-    public Boolean pay(Long invoiceId) {
-        Optional<Invoice> optionalInvoice = invoiceRepository.findById(invoiceId);
+    public PaymentOutputDto pay(PaymentInputDto paymentInputDto) {
+        Optional<Invoice> optionalInvoice = invoiceRepository.findById(paymentInputDto.getInvoiceId());
         if (optionalInvoice.isPresent()) {
-            Invoice invoice = optionalInvoice.get();
-            invoice.setPaid(true);
-            invoiceRepository.save(invoice);
-            return true;
+            PaymentOutputDto paymentOutputDto = new PaymentOutputDto();
+            if(paymentService.payRequest(paymentInputDto).getPaymentStatus()){
+                Invoice invoice = optionalInvoice.get();
+                invoice.setPaid(true);
+                invoiceRepository.save(invoice);
+                paymentOutputDto.setPaymentStatus(true);
+                paymentOutputDto.setPaymentMessage("Ödeme başarılı bir şekilde gerçekleşti");
+                return paymentOutputDto;
+            }
+            throw new ApplicationExceptionImpl("Ödeme Başarısız!");
         } else
             throw new ApplicationExceptionImpl("Fatura bulunamadı!");
     }
